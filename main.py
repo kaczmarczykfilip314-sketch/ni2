@@ -48,6 +48,11 @@ class Tenant(BaseModel):
         assert isinstance(data, dict), "Expected a dictionary of tenants"
         return {key: Tenant(**tenant) for key, tenant in data.items()}
     
+class Bill(BaseModel):
+    bill_type: str        
+    amount_pln: float   
+    due_date: str         
+    apartment_key: str    
 
 class Transfer(BaseModel):
     amount_pln: float
@@ -78,7 +83,7 @@ class Manager:
     def load_data(self):
         self.apartments = Apartment.from_json_file(self.parameters.apartments_json_path)
         self.tenants = Tenant.from_json_file(self.parameters.tenants_json_path)
-        self.transfers = Transfer.from_json_file(self.parameters.transfers_json_path)
+        self.bills = Bill.from_json_file(self.parameters.bills_json_path)
 
 if __name__ == '__main__':
     parameters = Parameters()
