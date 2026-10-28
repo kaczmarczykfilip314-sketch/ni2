@@ -1,6 +1,7 @@
 # NIP rent
 
 Aplikacja do rozliczania najmowanych mieszkań.
+Przykladowy tekst
 
 ## Getting started
 
