@@ -7,6 +7,7 @@ import json
 class Parameters(BaseModel):
     apartments_json_path: str = 'data/apartments.json'
     tenants_json_path: str = 'data/tenants.json'
+    transfers_json_path: str = 'data/transfers.json'
 
 
 class Room(BaseModel):
@@ -53,20 +54,29 @@ class Bill(BaseModel):
     due_date: str         
     apartment_key: str    
 
+class Transfer(BaseModel):
+    amount_pln: float
+    date: str
+    settlement_year: int | None
+    settlement_month: int | None
+    tenant: str
+
     @staticmethod
-    def from_json_file(file_path: str) -> Dict[str, 'Bill']:
+    def from_json_file(file_path: str) -> List['Transfer']:
         data = None
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, 'r') as file:
             data = json.load(file)
-        assert isinstance(data, dict), "Expected a dictionary of bills"
-        return {key: Bill(**bill) for key, bill in data.items()}
+        assert isinstance(data, list), "Expected a list of transfers"
+        return [Transfer(**transfer) for transfer in data]
     
+
 class Manager:
     def __init__(self, parameters: Parameters):
         self.parameters = parameters 
 
         self.apartments = {}
         self.tenants = {}
+        self.transfers = []
        
         self.load_data()
 
@@ -86,4 +96,8 @@ if __name__ == '__main__':
 
     for tenant in manager.tenants.values():
         print(tenant.name, tenant.apartment, tenant.room, tenant.rent_pln, tenant.deposit_pln, tenant.date_agreement_from, tenant.date_agreement_to)
-    
+
+        
+        for transfer in manager.transfers:
+            if transfer.tenant == tenant.name:
+                print('  ', transfer.amount_pln, transfer.date, transfer.settlement_year, transfer.settlement_month)
